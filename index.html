@@ -44,22 +44,22 @@ const fmtD = (n) => n < 0 ? "△"+fmt(Math.abs(n)) : fmt(n);
 
 /* ═══ THEMES ═══ */
 const THEMES = {
-  kitty: {
-    name:"🎀 키티",
-    bg:"#fff5f7", cardBg:"#fff", cardBdr:"#f0c4d0", cardHBg:"#fef7f9",
-    primary:"#e8567a", primaryGrad:"linear-gradient(135deg,#e8567a,#f0849a)",
-    accent:"#c0506a", accentLight:"#fff0f3",
-    text:"#4a3548", textLight:"#a0849a", hint:"#c0506a",
-    inputBdr:"#f0c4d0", inputFocusBdr:"#e8567a", inputFocusBg:"#fff0f3", inputFocusShadow:"rgba(232,86,122,.12)",
-    tabActiveTxt:"#c0506a", tabInactiveTxt:"rgba(255,255,255,.9)", tabBg:"#e8567a",
-    bottomTabBg:"#fff", bottomTabBdr:"#f0c4d0", bottomTabActive:"#e8567a", bottomTabInactive:"#a0849a",
-    badgeBg:"#e8567a", navSecBg:"#fce4ec", navSecTxt:"#c0506a",
-    resultGood:"#276749", resultBad:"#d63384", resultWarn:"#e65100", resultBlue:"#1565c0",
-    formHBg:"#fef7f9", formBdr:"#999",
-    summaryBg:"#fff0f3", summaryBdr:"#f0c4d0",
+  green: {
+    name:"🌿 그린",
+    bg:"#f2f7f2", cardBg:"#fff", cardBdr:"#c8dcc8", cardHBg:"#f5faf5",
+    primary:"#2e7d32", primaryGrad:"linear-gradient(135deg,#388e3c,#66bb6a)",
+    accent:"#2e7d32", accentLight:"#e8f5e9",
+    text:"#2d3a2d", textLight:"#6b8a6b", hint:"#4a7a4a",
+    inputBdr:"#c8dcc8", inputFocusBdr:"#4caf50", inputFocusBg:"#f1f8f1", inputFocusShadow:"rgba(76,175,80,.12)",
+    tabActiveTxt:"#2e7d32", tabInactiveTxt:"rgba(255,255,255,.9)", tabBg:"#388e3c",
+    bottomTabBg:"#fff", bottomTabBdr:"#c8dcc8", bottomTabActive:"#2e7d32", bottomTabInactive:"#8aaa8a",
+    badgeBg:"#e53935", navSecBg:"#e8f5e9", navSecTxt:"#2e7d32",
+    resultGood:"#1b5e20", resultBad:"#c62828", resultWarn:"#e65100", resultBlue:"#1565c0",
+    formHBg:"#f5faf5", formBdr:"#999",
+    summaryBg:"#e8f5e9", summaryBdr:"#a5d6a7",
     warnBg:"#fff8e1", warnBdr:"#ffe082", warnTxt:"#e65100",
-    okBg:"#e8f5e9", okBdr:"#a5d6a7", okTxt:"#2e7d32",
-    rowBdr:"#fce4ec", showKitty:true,
+    okBg:"#e8f5e9", okBdr:"#a5d6a7", okTxt:"#1b5e20",
+    rowBdr:"#e0ece0", showKitty:false,
   },
   white: {
     name:"⚪ 화이트",
@@ -78,22 +78,22 @@ const THEMES = {
     okBg:"#e8f5e9", okBdr:"#a5d6a7", okTxt:"#2e7d32",
     rowBdr:"#eee", showKitty:false,
   },
-  green: {
-    name:"🌿 그린",
-    bg:"#f2f7f2", cardBg:"#fff", cardBdr:"#c8dcc8", cardHBg:"#f5faf5",
-    primary:"#2e7d32", primaryGrad:"linear-gradient(135deg,#388e3c,#66bb6a)",
-    accent:"#2e7d32", accentLight:"#e8f5e9",
-    text:"#2d3a2d", textLight:"#6b8a6b", hint:"#4a7a4a",
-    inputBdr:"#c8dcc8", inputFocusBdr:"#4caf50", inputFocusBg:"#f1f8f1", inputFocusShadow:"rgba(76,175,80,.12)",
-    tabActiveTxt:"#2e7d32", tabInactiveTxt:"rgba(255,255,255,.9)", tabBg:"#388e3c",
-    bottomTabBg:"#fff", bottomTabBdr:"#c8dcc8", bottomTabActive:"#2e7d32", bottomTabInactive:"#8aaa8a",
-    badgeBg:"#e53935", navSecBg:"#e8f5e9", navSecTxt:"#2e7d32",
-    resultGood:"#1b5e20", resultBad:"#c62828", resultWarn:"#e65100", resultBlue:"#1565c0",
-    formHBg:"#f5faf5", formBdr:"#999",
-    summaryBg:"#e8f5e9", summaryBdr:"#a5d6a7",
+  kitty: {
+    name:"🎀 키티",
+    bg:"#fff5f7", cardBg:"#fff", cardBdr:"#f0c4d0", cardHBg:"#fef7f9",
+    primary:"#e8567a", primaryGrad:"linear-gradient(135deg,#e8567a,#f0849a)",
+    accent:"#c0506a", accentLight:"#fff0f3",
+    text:"#4a3548", textLight:"#a0849a", hint:"#c0506a",
+    inputBdr:"#f0c4d0", inputFocusBdr:"#e8567a", inputFocusBg:"#fff0f3", inputFocusShadow:"rgba(232,86,122,.12)",
+    tabActiveTxt:"#c0506a", tabInactiveTxt:"rgba(255,255,255,.9)", tabBg:"#e8567a",
+    bottomTabBg:"#fff", bottomTabBdr:"#f0c4d0", bottomTabActive:"#e8567a", bottomTabInactive:"#a0849a",
+    badgeBg:"#e8567a", navSecBg:"#fce4ec", navSecTxt:"#c0506a",
+    resultGood:"#276749", resultBad:"#d63384", resultWarn:"#e65100", resultBlue:"#1565c0",
+    formHBg:"#fef7f9", formBdr:"#999",
+    summaryBg:"#fff0f3", summaryBdr:"#f0c4d0",
     warnBg:"#fff8e1", warnBdr:"#ffe082", warnTxt:"#e65100",
-    okBg:"#e8f5e9", okBdr:"#a5d6a7", okTxt:"#1b5e20",
-    rowBdr:"#e0ece0", showKitty:false,
+    okBg:"#e8f5e9", okBdr:"#a5d6a7", okTxt:"#2e7d32",
+    rowBdr:"#fce4ec", showKitty:true,
   },
 };
 
@@ -156,7 +156,7 @@ const Form58 = (p) => {
 /* ═══ Main ═══ */
 function App() {
   const [tab, setTab] = useState("input");
-  const [theme, setTheme] = useState("kitty");
+  const [theme, setTheme] = useState("green");
   const t = THEMES[theme];
   const topRef = useRef(null);
   useEffect(()=>{if(topRef.current) topRef.current.scrollIntoView({behavior:"smooth"});},[tab]);
