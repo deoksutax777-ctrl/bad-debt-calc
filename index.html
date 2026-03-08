@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="대손충당금">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e8567a">
+<title>대손충당금 명세서 🎀</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body,#root{height:100%;width:100%;overflow-x:hidden;}
+body{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;background:#fff5f7;color:#4a3548;overscroll-behavior-y:contain;}
+html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+.app-shell{padding-bottom:env(safe-area-inset-bottom);}
+input,select,button{font-family:inherit;}
+.ni{width:100%;padding:10px 12px;border:1px solid #f0c4d0;border-radius:10px;font-size:16px;background:#fff;outline:none;box-sizing:border-box;text-align:right;font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s;}
+.ni:focus{border-color:#e8567a;background:#fff0f3;box-shadow:0 0 0 3px rgba(232,86,122,.12);}
+.ni-label{font-size:13px;color:#a0849a;margin-bottom:5px;display:block;line-height:1.4;}
+.field{margin-bottom:16px;}
+.hint{font-size:11.5px;color:#c0506a;margin-top:3px;padding-left:2px;line-height:1.4;}
+.bottom-tabs{display:none;}
+@media(max-width:768px){
+  .top-tabs{display:none!important;}
+  .bottom-tabs{display:flex!important;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid #f0c4d0;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+  .bottom-tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 6px;border:none;background:transparent;font-size:10px;color:#a0849a;cursor:pointer;position:relative;transition:color .15s;}
+  .bottom-tabs button.active{color:#e8567a;font-weight:700;}
+  .bottom-tabs button .tab-icon{font-size:20px;}
+  .bottom-tabs .badge{position:absolute;top:3px;right:calc(50% - 16px);background:#e8567a;color:#fff;border-radius:8px;padding:0 5px;font-size:9px;font-weight:700;line-height:16px;}
+  .main-content{padding-bottom:76px!important;}
+}
+.nav-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;}
+.nav-btn:active{transform:scale(0.98);}
+.nav-btn-primary{background:linear-gradient(135deg,#e8567a,#f0849a);color:#fff;}
+.nav-btn-secondary{background:#fce4ec;color:#c0506a;}
+@media print{.top-tabs,.bottom-tabs,.app-header,.nav-area,.kitty-deco{display:none!important;}.main-content{padding:0!important;}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo, Fragment, useRef, useEffect } = React;
+const fmt = (n) => { if(n===null||n===undefined||n==="") return ""; if(n===0) return "0"; return Number(n).toLocaleString("ko-KR"); };
+const parse = (s) => Number(String(s).replace(/,/g,"")) || 0;
+const fmtD = (n) => n < 0 ? "△"+fmt(Math.abs(n)) : fmt(n);
+
+const KittyFace = ({size=40,style:st,color="#e8567a"}) => (<svg width={size} height={size} viewBox="0 0 120 120" style={st}><ellipse cx="60" cy="68" rx="40" ry="35" fill="#fff" stroke="#555" strokeWidth="1.8"/><path d="M24,48 L16,12 L42,36 Z" fill="#fff" stroke="#555" strokeWidth="1.8" strokeLinejoin="round"/><path d="M96,48 L104,12 L78,36 Z" fill="#fff" stroke="#555" strokeWidth="1.8" strokeLinejoin="round"/><ellipse cx="88" cy="26" rx="12" ry="8" fill={color} transform="rotate(-20,88,26)"/><ellipse cx="100" cy="18" rx="10" ry="7" fill={color} transform="rotate(15,100,18)"/><circle cx="93" cy="23" r="4" fill="#f7c948"/><ellipse cx="44" cy="62" rx="4" ry="5" fill="#333"/><ellipse cx="76" cy="62" rx="4" ry="5" fill="#333"/><ellipse cx="60" cy="72" rx="3" ry="2.2" fill="#f7c948"/><line x1="8" y1="58" x2="36" y2="64" stroke="#555" strokeWidth="1.2"/><line x1="8" y1="68" x2="36" y2="68" stroke="#555" strokeWidth="1.2"/><line x1="8" y1="78" x2="36" y2="72" stroke="#555" strokeWidth="1.2"/><line x1="112" y1="58" x2="84" y2="64" stroke="#555" strokeWidth="1.2"/><line x1="112" y1="68" x2="84" y2="68" stroke="#555" strokeWidth="1.2"/><line x1="112" y1="78" x2="84" y2="72" stroke="#555" strokeWidth="1.2"/></svg>);
+const KittyMini = ({size=24,style:st}) => (<svg width={size} height={size} viewBox="0 0 120 120" style={{...st,display:"inline-block",verticalAlign:"middle",flexShrink:0}}><ellipse cx="60" cy="68" rx="40" ry="35" fill="#fff" stroke="#e8567a" strokeWidth="3"/><path d="M24,48 L16,12 L42,36 Z" fill="#fff" stroke="#e8567a" strokeWidth="3" strokeLinejoin="round"/><path d="M96,48 L104,12 L78,36 Z" fill="#fff" stroke="#e8567a" strokeWidth="3" strokeLinejoin="round"/><ellipse cx="88" cy="26" rx="11" ry="7" fill="#e8567a" transform="rotate(-20,88,26)"/><ellipse cx="100" cy="18" rx="9" ry="6" fill="#e8567a" transform="rotate(15,100,18)"/><circle cx="93" cy="23" r="4" fill="#f7c948"/><ellipse cx="44" cy="62" rx="5" ry="6" fill="#444"/><ellipse cx="76" cy="62" rx="5" ry="6" fill="#444"/><ellipse cx="60" cy="72" rx="3.5" ry="2.5" fill="#f7c948"/></svg>);
+const KittyPaw = ({size=20,style:st}) => (<svg width={size} height={size} viewBox="0 0 60 60" style={{...st,display:"inline-block",verticalAlign:"middle"}}><ellipse cx="30" cy="36" rx="15" ry="14" fill="#fce4ec" stroke="#e8567a" strokeWidth="1.5"/><circle cx="19" cy="20" r="6.5" fill="#fce4ec" stroke="#e8567a" strokeWidth="1.5"/><circle cx="30" cy="16" r="6.5" fill="#fce4ec" stroke="#e8567a" strokeWidth="1.5"/><circle cx="41" cy="20" r="6.5" fill="#fce4ec" stroke="#e8567a" strokeWidth="1.5"/></svg>);
+
+const NumberInput = ({ value, onChange, placeholder="0", label, hint }) => {
+  const [focused, setFocused] = useState(false);
+  const display = focused ? (value===0?"":String(value)) : fmt(value);
+  return (<div className="field">{label&&<label className="ni-label">{label}</label>}<input type="text" inputMode="numeric" value={display} placeholder={placeholder} className="ni" onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)} onChange={(e)=>onChange(parse(e.target.value))} />{hint&&<div className="hint">{hint}</div>}</div>);
+};
+const ReadonlyField = ({ label, value, sub }) => (<div className="field"><label className="ni-label">{label}</label><div style={{padding:"10px 12px",background:"#fff0f3",borderRadius:10,textAlign:"right",fontSize:16,fontWeight:700,fontVariantNumeric:"tabular-nums",color:value<0?"#d63384":"#c0506a",border:"1px solid #f0c4d0"}}>{fmtD(value)}</div>{sub&&<div style={{fontSize:11.5,color:"#a0849a",marginTop:3,paddingLeft:2}}>{sub}</div>}</div>);
+
+const TABS = [{key:"input",label:"입력",icon:"✏️"},{key:"calc",label:"계산",icon:"🧮"},{key:"form",label:"서식",icon:"📄"}];
+const ACCTS = ["외상매출채권","받을어음","미수금","대여금","선급금","기타"];
+
+/* ═══ 별지 제58호서식 ═══ */
+const Form58 = (p) => {
+  const h={border:"1px solid #999",padding:"4px 3px",fontSize:"min(2.2vw, 10px)",lineHeight:1.35,verticalAlign:"middle",textAlign:"center",background:"#fef7f9",fontWeight:600,wordBreak:"keep-all"};
+  const v={border:"1px solid #999",padding:"3px 4px",fontSize:"min(2.5vw, 11px)",lineHeight:1.3,verticalAlign:"middle",textAlign:"right",fontVariantNumeric:"tabular-nums",fontWeight:500};
+  const vc={...v,textAlign:"center"};
+  const hi=(c)=>c?{...v,color:"#d63384",fontWeight:700}:v;
+  const rr=p.receivables.filter(r=>r.amount>0);
+  const tb=p.receivables.reduce((s,r)=>s+(r.amount||0),0);
+  const te=p.receivables.reduce((s,r)=>s+(r.excluded||0),0);
+  return (
+    <div style={{background:"#fff",padding:"16px 10px",border:"1.5px solid #dda",borderRadius:4,maxWidth:920,margin:"0 auto",fontFamily:"'Malgun Gothic','Noto Sans KR',sans-serif",position:"relative"}}>
+      <div className="kitty-deco" style={{position:"absolute",top:6,right:6,opacity:.25}}><KittyFace size={28}/></div>
+      <div style={{textAlign:"right",fontSize:9,color:"#aaa",marginBottom:2}}>(앞쪽)</div>
+      <table style={{width:"100%",borderCollapse:"collapse",marginBottom:12}}><tbody>
+        <tr><td style={{...h,width:"8%"}} rowSpan={2}>사 업<br/>연 도</td><td style={{...v,width:"12%",textAlign:"center",fontSize:"min(2.2vw,10px)"}}>{p.bizYear}.01.01</td><td style={{...v,textAlign:"center",fontSize:"min(3.5vw,16px)",fontWeight:800,letterSpacing:3}} rowSpan={2}>대손충당금 및 대손금조정명세서</td><td style={{...h,width:"10%"}}>법 인 명</td><td style={{...v,width:"14%",textAlign:"center"}}>{p.companyName}</td></tr>
+        <tr><td style={{...v,textAlign:"center",fontSize:"min(2.2vw,10px)"}}>~<br/>{p.bizYear}.12.31</td><td style={h}>사업자등록번호</td><td style={{...v,textAlign:"center"}}>{p.bizNo}</td></tr>
+      </tbody></table>
+      <div style={{fontSize:"min(3vw,12px)",fontWeight:700,marginBottom:5}}>1. 대손충당금조정</div>
+      <div style={{overflowX:"auto",marginBottom:3}}>
+      <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",minWidth:500}}><colgroup><col style={{width:"7%"}}/><col style={{width:"12%"}}/><col style={{width:"6%"}}/><col style={{width:"8%"}}/><col style={{width:"8%"}}/><col style={{width:"10%"}}/><col style={{width:"10%"}}/><col style={{width:"8%"}}/><col style={{width:"11%"}}/><col style={{width:"12%"}}/></colgroup><tbody>
+        <tr><td style={h} rowSpan={3}>손 금<br/>산입액<br/>조 정</td><td style={h} rowSpan={2}>①채권잔액<br/>(㉑의 금액)</td><td style={h} colSpan={3}>② 설정률</td><td style={h} rowSpan={2}>③한도액<br/>(①×②)</td><td style={h} colSpan={2}>회사계상액</td><td style={h} rowSpan={2}>⑥ 계</td><td style={h} rowSpan={2}>⑦한도초과액<br/>(⑥-③)</td></tr>
+        <tr><td style={{...h,fontSize:"min(1.8vw,8px)"}}>(ㄱ)<br/>1(2)/100</td><td style={{...h,fontSize:"min(1.8vw,8px)"}}>(ㄴ)<br/>실적률</td><td style={{...h,fontSize:"min(1.8vw,8px)"}}>(ㄷ)<br/>적립기준</td><td style={h}>④당기<br/>계상액</td><td style={h}>⑤보충액</td></tr>
+        <tr><td style={v}>{fmt(p.taxBase)}</td><td style={vc}>{p.sPct}</td><td style={vc}>{p.aPct}</td><td style={vc}>{p.rPct}</td><td style={v}>{fmt(p.limit)}</td><td style={v}>{fmt(p.v4)}</td><td style={v}>{fmt(p.v5)}</td><td style={v}>{fmt(p.provEnd)}</td><td style={hi(p.overLimit>0)}>{fmt(p.overLimit)}</td></tr>
+        <tr><td style={h} rowSpan={2}>익 금<br/>산입액<br/>조 정</td><td style={h}>⑧장부상<br/>충당금<br/>기초잔액</td><td style={h}>⑨기중<br/>충당금<br/>환입액</td><td style={h}>⑩충당금<br/>부인<br/>누계액</td><td style={h} colSpan={2}>⑪당기대손<br/>금 상계액</td><td style={h}>⑫당기<br/>설정충당금<br/>보충액</td><td style={h}>⑬환입할금액<br/>(⑧-⑨-⑩<br/>-⑪-⑫)</td><td style={h}>⑭회사<br/>환입액</td><td style={h}>⑮과소환입·<br/>과다환입(△)<br/>(⑬-⑭)</td></tr>
+        <tr><td style={v}>{fmt(p.provBeg)}</td><td style={v}>{fmt(p.midReversal)}</td><td style={v}>{fmt(p.denied)}</td><td style={v} colSpan={2}>{fmt(p.provDecrease)}</td><td style={v}>{fmt(p.v5)}</td><td style={v}>{fmtD(p.v13)}</td><td style={v}>{fmt(p.endReversal)}</td><td style={hi(p.v15!==0)}>{fmtD(p.v15)}</td></tr>
+      </tbody></table></div>
+      <div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",minWidth:450}}><colgroup><col style={{width:"7%"}}/><col style={{width:"14%"}}/><col style={{width:"16%"}}/><col style={{width:"14%"}}/><col style={{width:"14%"}}/><col style={{width:"12%"}}/><col style={{width:"14%"}}/><col style={{width:"9%"}}/></colgroup><tbody>
+        <tr><td style={h} rowSpan={rr.length+Math.max(3-rr.length,0)+2}>채 권<br/>잔 액</td><td style={h}>⑯계정과목</td><td style={h}>⑰채권잔액의<br/>장부가액</td><td style={h}>⑱기말현재<br/>대손금부인누계</td><td style={h}>⑲합계<br/>(⑰+⑱)</td><td style={h}>⑳충당금<br/>설정제외<br/>채 권</td><td style={h}>㉑채권잔액<br/>(⑲-⑳)</td><td style={h}>비고</td></tr>
+        {rr.map(r=>(<tr key={r.name}><td style={vc}>{r.name}</td><td style={v}>{fmt(r.amount)}</td><td style={v}></td><td style={v}>{fmt(r.amount)}</td><td style={v}>{fmt(r.excluded)}</td><td style={v}>{fmt(r.amount-r.excluded)}</td><td style={{...v,textAlign:"center"}}></td></tr>))}
+        {Array.from({length:Math.max(3-rr.length,0)}).map((_,i)=>(<tr key={"e"+i}><td style={v}>&nbsp;</td><td style={v}></td><td style={v}></td><td style={v}></td><td style={v}></td><td style={v}></td><td style={v}></td></tr>))}
+        <tr><td style={h}>계</td><td style={{...v,fontWeight:700}}>{fmt(tb)}</td><td style={{...v,fontWeight:700}}></td><td style={{...v,fontWeight:700}}>{fmt(tb)}</td><td style={{...v,fontWeight:700}}>{fmt(te)}</td><td style={{...v,fontWeight:700}}>{fmt(p.taxBase)}</td><td style={v}></td></tr>
+      </tbody></table></div>
+      <div className="kitty-deco" style={{textAlign:"center",marginTop:6,opacity:.15}}><KittyPaw size={16}/><KittyPaw size={16}/><KittyPaw size={16}/><KittyPaw size={16}/><KittyPaw size={16}/></div>
+    </div>
+  );
+};
+
+/* ═══ Main ═══ */
+function App() {
+  const [tab, setTab] = useState("input");
+  const topRef = useRef(null);
+  useEffect(()=>{if(topRef.current) topRef.current.scrollIntoView({behavior:"smooth"});},[tab]);
+
+  const [companyName, setCompanyName] = useState("");
+  const [bizYear, setBizYear] = useState("2025");
+  const [bizNo, setBizNo] = useState("");
+  const [receivables, setReceivables] = useState([{id:1,name:"외상매출채권",amount:0,excluded:0}]);
+  const [nextId, setNextId] = useState(2);
+  const [provBeg, setProvBeg] = useState(0);          // ⑧
+  const [provIncrease, setProvIncrease] = useState(0); // ④ 전입(대손상각비)
+  const [provDecrease, setProvDecrease] = useState(0); // ⑪ 상계(실제대손)
+  const [midReversal, setMidReversal] = useState(0);   // ⑨ 기중 환입(채권회수 등)
+  const [provEnd, setProvEnd] = useState(0);           // ⑥ 기말잔액
+  const [denied, setDenied] = useState(0);             // ⑩ 부인누계
+  const [endReversal, setEndReversal] = useState(0);   // ⑭ 기말 회사환입액
+  const [priorBD, setPriorBD] = useState(0);
+  const [rateMode, setRateMode] = useState("auto"); // auto, statutory, actual
+
+  const totalRec = useMemo(()=>receivables.reduce((s,r)=>s+(r.amount||0),0),[receivables]);
+  const totalExcl = useMemo(()=>receivables.reduce((s,r)=>s+(r.excluded||0),0),[receivables]);
+  const taxBase = totalRec - totalExcl;
+  const calcEnd = provBeg + provIncrease - provDecrease - midReversal - endReversal;
+  const endMismatch = (provEnd>0||provBeg>0) && calcEnd!==provEnd;
+
+  const actualRate = taxBase>0 ? ((provDecrease+priorBD)/(taxBase*2))*100 : 0;
+  const statutoryRate = 1;
+  const appliedRate = rateMode==="statutory" ? statutoryRate : rateMode==="actual" ? actualRate : Math.max(actualRate, statutoryRate);
+  const limit = Math.floor(taxBase * appliedRate / 100);
+
+  // ⑤ 보충액 = 설정 전 장부잔액 = 기초 - 상계 - 기중환입 - 기말환입
+  // 즉 ⑤ = ⑥기말 - ④전입
+  const v5 = Math.max(provEnd - provIncrease, 0);
+  // ⑦ = max(⑥ - ③, 0)
+  const overLimit = Math.max(provEnd - limit, 0);
+  // ⑬ = ⑧ - ⑨ - ⑩ - ⑪ - ⑫(=⑤)
+  const v13 = provBeg - midReversal - denied - provDecrease - v5;
+  // ⑮ = ⑬ - ⑭
+  const v15 = v13 - endReversal;
+
+  const warnings = useMemo(()=>{
+    const w=[];
+    if(!companyName) w.push("법인명 미입력");
+    if(totalRec===0) w.push("채권잔액 0원");
+    if(totalExcl>totalRec) w.push("설정제외 > 총채권");
+    if(overLimit>0) w.push("⑦ 한도초과 "+fmt(overLimit)+" 손금불산입(유보)");
+    if(provEnd<0) w.push("충당금 기말 음수");
+    if(v15>0) w.push("⑮ 과소환입 "+fmt(v15)+" 익금산입(유보)");
+    if(v15<0) w.push("⑮ 과다환입 △"+fmt(Math.abs(v15))+" 손금산입(△유보)");
+    if(endMismatch) w.push("기말검증: "+fmt(calcEnd)+" ≠ 입력 "+fmt(provEnd));
+    if(v15<0&&Math.abs(v15)!==denied&&denied>0) w.push("※ ⑮("+fmt(Math.abs(v15))+") ≠ ⑩("+fmt(denied)+") 확인");
+    return w;
+  },[companyName,totalRec,totalExcl,overLimit,provEnd,v15,endMismatch,calcEnd,denied]);
+
+  const updRec=(id,f,val)=>setReceivables(receivables.map(r=>r.id===id?{...r,[f]:val}:r));
+  const addRec=()=>{setReceivables([...receivables,{id:nextId,name:"미수금",amount:0,excluded:0}]);setNextId(nextId+1);};
+  const delRec=(id)=>setReceivables(receivables.filter(r=>r.id!==id));
+  const goNext=()=>{const k=TABS.map(t=>t.key);const i=k.indexOf(tab);if(i<k.length-1)setTab(k[i+1]);};
+  const goPrev=()=>{const k=TABS.map(t=>t.key);const i=k.indexOf(tab);if(i>0)setTab(k[i-1]);};
+
+  const card={background:"#fff",borderRadius:14,border:"1.5px solid #f0c4d0",marginBottom:16,overflow:"hidden"};
+  const cardH={padding:"13px 16px",borderBottom:"1.5px solid #f0c4d0",fontWeight:700,fontSize:15,background:"#fef7f9",display:"flex",justifyContent:"space-between",alignItems:"center"};
+  const cardB={padding:"16px"};
+  const rw={display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid #fce4ec"};
+
+  return (
+    <div className="app-shell" style={{background:"#fff5f7",minHeight:"100vh",fontSize:14,lineHeight:1.6}}>
+      <div ref={topRef}></div>
+      <div className="app-header" style={{background:"linear-gradient(135deg,#e8567a 0%,#f0849a 50%,#f5a0b0 100%)",color:"#fff",padding:"18px 18px 14px",paddingTop:"max(18px, env(safe-area-inset-top))",position:"relative",overflow:"hidden"}}>
+        <div className="kitty-deco" style={{position:"absolute",top:6,right:10,opacity:.2}}><KittyFace size={55} color="#fff"/></div>
+        <h1 style={{fontSize:18,fontWeight:700,margin:0}}>🎀 대손충당금 명세서</h1>
+        <div style={{fontSize:11,opacity:.85,marginTop:2}}>별지 제58호서식 · 자동계산</div>
+      </div>
+
+      <div className="top-tabs" style={{display:"flex",gap:2,padding:"0 16px",background:"#e8567a"}}>
+        {TABS.map(t=>(<button key={t.key} onClick={()=>setTab(t.key)} style={{padding:"9px 20px",fontSize:14,fontWeight:tab===t.key?600:400,color:tab===t.key?"#c0506a":"rgba(255,255,255,.9)",background:tab===t.key?"#fff5f7":"transparent",border:"none",borderRadius:"8px 8px 0 0",cursor:"pointer"}}>{t.icon} {t.label}{t.key==="form"&&warnings.length>0&&<span style={{marginLeft:5,background:"#fff",color:"#e8567a",borderRadius:10,padding:"1px 6px",fontSize:10,fontWeight:700}}>{warnings.length}</span>}</button>))}
+      </div>
+
+      <div className="main-content" style={{padding:16,maxWidth:680,margin:"0 auto"}}>
+
+        {tab==="input" && (<Fragment>
+          <div style={card}><div style={cardH}><span><KittyMini size={22}/> 기본정보</span></div><div style={cardB}>
+            <div className="field"><label className="ni-label">법인명</label><input className="ni" style={{textAlign:"left"}} placeholder="(주)예시법인" value={companyName} onChange={e=>setCompanyName(e.target.value)} /></div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><div className="field"><label className="ni-label">사업연도</label><input className="ni" style={{textAlign:"center"}} value={bizYear} onChange={e=>setBizYear(e.target.value)} /></div><div className="field"><label className="ni-label">사업자등록번호</label><input className="ni" style={{textAlign:"center"}} placeholder="000-00-00000" value={bizNo} onChange={e=>setBizNo(e.target.value)} /></div></div>
+          </div></div>
+
+          <div style={card}><div style={cardH}><span><KittyPaw size={20}/> ① 채권 기말잔액</span><button onClick={addRec} style={{padding:"6px 12px",fontSize:13,background:"linear-gradient(135deg,#e8567a,#f0849a)",color:"#fff",border:"none",borderRadius:8,cursor:"pointer"}}>+ 추가</button></div><div style={cardB}>
+            {receivables.map((r,i)=>(<div key={r.id} style={{padding:"12px 0",borderBottom:i<receivables.length-1?"1px solid #fce4ec":"none"}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                <select className="ni" style={{flex:1,textAlign:"left"}} value={r.name} onChange={e=>updRec(r.id,"name",e.target.value)}>{ACCTS.map(a=><option key={a}>{a}</option>)}</select>
+                {receivables.length>1&&<button onClick={()=>delRec(r.id)} style={{padding:"8px 12px",fontSize:13,background:"#fce4ec",color:"#d63384",border:"none",borderRadius:8,cursor:"pointer"}}>삭제</button>}
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                <NumberInput label="장부가액" value={r.amount} onChange={v=>updRec(r.id,"amount",v)} />
+                <NumberInput label="설정제외 채권" value={r.excluded} onChange={v=>updRec(r.id,"excluded",v)} />
+              </div>
+            </div>))}
+            <div style={{marginTop:12,padding:"12px 14px",background:"#fff0f3",borderRadius:10,display:"flex",justifyContent:"space-between",alignItems:"center",border:"1px solid #f0c4d0"}}><span style={{fontSize:14,fontWeight:600,color:"#c0506a"}}><KittyMini size={16}/> 설정대상 채권잔액</span><span style={{fontSize:18,fontWeight:700,color:"#c0506a",fontVariantNumeric:"tabular-nums"}}>{fmt(taxBase)}</span></div>
+          </div></div>
+
+          <div style={card}><div style={cardH}><span><KittyMini size={22}/> ② 대손충당금</span></div><div style={cardB}>
+            <NumberInput label="⑧ 기초잔액" value={provBeg} onChange={setProvBeg} />
+            <NumberInput label="④ 전입 (대손상각비)" value={provIncrease} onChange={setProvIncrease} hint="※ 차변 대손상각비 / 대변 대손충당금으로 증가시킨 금액" />
+            <NumberInput label="⑪ 상계 (실제대손 제각)" value={provDecrease} onChange={setProvDecrease} hint="※ 차변 대손충당금 / 대변 채권으로 상계한 금액" />
+            <NumberInput label="⑨ 기중 환입 (채권회수 등)" value={midReversal} onChange={setMidReversal} hint="※ 기중에 대손처리 채권이 회수되어 충당금 환입된 금액 (없으면 0)" />
+            <NumberInput label="⑭ 기말 회사환입액" value={endReversal} onChange={setEndReversal} hint="※ 대손충당금을 기말에 환입하는 경우 환입액 입력 (없으면 0)" />
+            <div style={{borderTop:"2px solid #f0c4d0",paddingTop:14,marginTop:4}}>
+              <NumberInput label="⑥ 기말잔액 (BS상 대손충당금 차기이월)" value={provEnd} onChange={setProvEnd} />
+            </div>
+            {endMismatch&&<div style={{padding:"8px 12px",background:"#fff8e1",border:"1px solid #ffe082",borderRadius:8,fontSize:12,color:"#e65100",marginTop:4}}>※ 검증: {fmt(provBeg)}+{fmt(provIncrease)}-{fmt(provDecrease)}-{fmt(midReversal)}-{fmt(endReversal)} = {fmt(calcEnd)} (입력: {fmt(provEnd)})</div>}
+            <ReadonlyField label="⑤ 보충액 (자동: ⑥-④)" value={v5} sub={fmt(provEnd)+" - "+fmt(provIncrease)+" = "+fmt(v5)} />
+          </div></div>
+
+          <div style={card}><div style={cardH}><span><KittyPaw size={20}/> 세무조정 이월</span></div><div style={cardB}>
+            <NumberInput label="⑩ 전기 충당금 부인누계 (유보)" value={denied} onChange={setDenied} hint="※ 전기 자본금과적립금(을)의 대손충당금 기말잔액" />
+            <NumberInput label="전기 대손 처리액 (실적률용)" value={priorBD} onChange={setPriorBD} />
+            <div className="field">
+              <label className="ni-label">② 설정률 적용 방식</label>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {[{v:"auto",l:"자동 (큰 금액)"},{v:"statutory",l:"법정률 1% 고정"},{v:"actual",l:"실적률 고정"}].map(o=>(
+                  <button key={o.v} onClick={()=>setRateMode(o.v)} style={{flex:"1 1 auto",padding:"9px 12px",fontSize:13,fontWeight:rateMode===o.v?600:400,background:rateMode===o.v?"#e8567a":"#fff",color:rateMode===o.v?"#fff":"#a0849a",border:"1.5px solid "+(rateMode===o.v?"#e8567a":"#f0c4d0"),borderRadius:8,cursor:"pointer"}}>{o.l}</button>
+                ))}
+              </div>
+              <div className="hint">※ 전기 데이터 부족 시 법정률 1% 고정을 선택하세요</div>
+            </div>
+          </div></div>
+
+          <div className="nav-area" style={{marginTop:8,marginBottom:20}}>
+            <button className="nav-btn nav-btn-primary" onClick={goNext}>🎀 계산 결과 보기 →</button>
+          </div>
+          <div className="kitty-deco" style={{textAlign:"center",opacity:.12,marginBottom:20}}><KittyFace size={60}/></div>
+        </Fragment>)}
+
+        {tab==="calc" && (<Fragment>
+          <div style={card}><div style={cardH}><span><KittyPaw size={20}/> 세법 한도액</span></div><div style={cardB}>
+            <div style={rw}><span>설정대상 채권잔액 (㉑)</span><span style={{fontWeight:700}}>{fmt(taxBase)}</span></div>
+            <div style={rw}><span>대손실적률 (ㄴ)</span><span style={{fontWeight:700,color:actualRate>statutoryRate?"#c0506a":"#a0849a"}}>{actualRate.toFixed(4)}%{actualRate>statutoryRate&&" ▲"}</span></div>
+            <div style={rw}><span>법정설정률 (ㄱ)</span><span style={{fontWeight:700,color:statutoryRate>=actualRate?"#c0506a":"#a0849a"}}>{statutoryRate}%{statutoryRate>=actualRate&&" ▲"}</span></div>
+            <div style={{...rw,borderBottom:"2px solid #f0c4d0",paddingBottom:14}}><span style={{fontWeight:700,fontSize:15}}>③ 한도액 {rateMode!=="auto"&&<span style={{fontSize:11,fontWeight:400,color:"#e8567a"}}>({rateMode==="statutory"?"법정률 고정":"실적률 고정"})</span>}</span><span style={{fontWeight:700,fontSize:20,color:"#c0506a"}}>{fmt(limit)}</span></div>
+            <div style={{fontSize:12,color:"#a0849a",padding:"6px 10px",background:"#fef7f9",borderRadius:8,marginTop:8}}>{fmt(taxBase)} × {appliedRate.toFixed(4)}% = {fmt(limit)}</div>
+          </div></div>
+
+          <div style={card}><div style={cardH}><span><KittyMini size={20}/> ⑦ 손금산입 조정</span></div><div style={cardB}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 40px 1fr",alignItems:"center",marginBottom:16}}>
+              <div style={{padding:"14px",background:"#fef7f9",borderRadius:10,textAlign:"center",border:"1px solid #f0c4d0"}}><div style={{fontSize:12,color:"#a0849a",marginBottom:4}}>⑥ 기말충당금</div><div style={{fontSize:20,fontWeight:700}}>{fmt(provEnd)}</div></div>
+              <div style={{textAlign:"center",fontSize:18,fontWeight:700,color:"#e8567a"}}>vs</div>
+              <div style={{padding:"14px",background:"#fff0f3",borderRadius:10,textAlign:"center",border:"1px solid #f0c4d0"}}><div style={{fontSize:12,color:"#c0506a",marginBottom:4}}>③ 한도액</div><div style={{fontSize:20,fontWeight:700,color:"#c0506a"}}>{fmt(limit)}</div></div>
+            </div>
+            <div style={{padding:"12px 14px",borderRadius:10,background:overLimit>0?"#fff0f3":"#f0fff4",border:"1px solid "+(overLimit>0?"#f0c4d0":"#c6f6d5")}}>
+              <div style={{fontSize:13,color:"#a0849a",marginBottom:4}}>⑦ 한도초과 손금불산입</div>
+              <div style={{fontSize:22,fontWeight:700,color:overLimit>0?"#d63384":"#276749"}}>{fmt(overLimit)}</div>
+              {overLimit>0&&<div style={{fontSize:12,fontWeight:600,color:"#d63384",marginTop:4}}>→ 유보</div>}
+              {overLimit===0&&<div style={{fontSize:12,color:"#276749",marginTop:4}}>한도 이내 ✓</div>}
+            </div>
+          </div></div>
+
+          <div style={card}><div style={cardH}><span><KittyPaw size={20}/> ⑮ 익금산입 조정</span></div><div style={cardB}>
+            <div style={{fontSize:12,color:"#a0849a",padding:"10px 12px",background:"#fef7f9",borderRadius:8,marginBottom:12,lineHeight:1.8,border:"1px solid #f0c4d0"}}>
+              <strong>⑬</strong> = ⑧ - ⑨ - ⑩ - ⑪ - ⑫(=⑤)<br/>
+              = {fmt(provBeg)} - {fmt(midReversal)} - {fmt(denied)} - {fmt(provDecrease)} - {fmt(v5)}<br/>
+              = <strong style={{color:"#4a3548"}}>{fmtD(v13)}</strong>
+            </div>
+            <div style={{fontSize:12,color:"#a0849a",padding:"10px 12px",background:"#fef7f9",borderRadius:8,marginBottom:12,border:"1px solid #f0c4d0"}}>
+              <strong>⑮</strong> = ⑬ - ⑭ = {fmtD(v13)} - {fmt(endReversal)} = <strong style={{color:"#4a3548"}}>{fmtD(v15)}</strong>
+            </div>
+            <div style={{padding:"12px 14px",borderRadius:10,background:v15<0?"#e3f2fd":v15>0?"#fff8e1":"#f0fff4",border:"1px solid "+(v15<0?"#90caf9":v15>0?"#ffe082":"#c6f6d5")}}>
+              <div style={{fontSize:13,color:"#a0849a",marginBottom:4}}>⑮ 과소환입 · 과다환입(△)</div>
+              <div style={{fontSize:22,fontWeight:700,color:v15>0?"#e65100":v15<0?"#1565c0":"#276749"}}>{fmtD(v15)}</div>
+              {v15>0&&<div style={{fontSize:12,fontWeight:600,color:"#e65100",marginTop:4}}>→ 과소환입 · 익금산입 · 유보</div>}
+              {v15<0&&<div style={{fontSize:12,fontWeight:600,color:"#1565c0",marginTop:4}}>→ 과다환입 · 손금산입 · △유보</div>}
+              {v15===0&&<div style={{fontSize:12,color:"#276749",marginTop:4}}>조정 없음 ✓</div>}
+            </div>
+            {v15<0&&denied>0&&Math.abs(v15)===denied&&(
+              <div style={{marginTop:10,padding:"8px 12px",background:"#e8f5e9",border:"1px solid #a5d6a7",borderRadius:8,fontSize:12,color:"#2e7d32"}}>
+                <KittyMini size={14}/> ✓ 과다환입 △{fmt(denied)} = 전기유보 — 유보 해소!
+              </div>
+            )}
+          </div></div>
+
+          <div className="kitty-deco" style={{textAlign:"center",opacity:.1,margin:"8px 0"}}><KittyPaw size={14}/><KittyPaw size={14}/><KittyPaw size={14}/></div>
+          <div className="nav-area" style={{display:"flex",gap:10,marginTop:8,marginBottom:20}}>
+            <button className="nav-btn nav-btn-secondary" onClick={goPrev} style={{flex:1}}>← 입력</button>
+            <button className="nav-btn nav-btn-primary" onClick={goNext} style={{flex:1}}>🎀 서식 보기 →</button>
+          </div>
+        </Fragment>)}
+
+        {tab==="form" && (<Fragment>
+          {warnings.length>0 ? (
+            <div style={{background:"#fff8e1",border:"1px solid #ffe082",borderRadius:10,padding:"10px 14px",marginBottom:14}}>
+              <div style={{fontWeight:600,color:"#e65100",fontSize:13,marginBottom:4}}>⚠ 검토 ({warnings.length}건)</div>
+              {warnings.map((w,i)=><div key={i} style={{fontSize:13,padding:"2px 0"}}>· {w}</div>)}
+            </div>
+          ) : (
+            <div style={{background:"#e8f5e9",border:"1px solid #a5d6a7",borderRadius:10,padding:"10px 14px",marginBottom:14}}>
+              <div style={{fontWeight:600,color:"#2e7d32",fontSize:13}}><KittyMini size={16}/> ✓ 검토 통과!</div>
+            </div>
+          )}
+          <div style={{overflowX:"auto"}}>
+            <Form58 companyName={companyName} bizYear={bizYear} bizNo={bizNo} receivables={receivables} taxBase={taxBase}
+              sPct={statutoryRate+"%"} aPct={actualRate.toFixed(4)+"%"} rPct={appliedRate.toFixed(4)+"%"}
+              limit={limit} v4={provIncrease} v5={v5} provEnd={provEnd} overLimit={overLimit}
+              provBeg={provBeg} provDecrease={provDecrease} midReversal={midReversal} denied={denied}
+              endReversal={endReversal} v13={v13} v15={v15} />
+          </div>
+          <div className="nav-area" style={{display:"flex",gap:10,marginTop:16,marginBottom:20}}>
+            <button className="nav-btn nav-btn-secondary" onClick={goPrev}>← 계산 결과</button>
+          </div>
+          <div className="kitty-deco" style={{textAlign:"center",opacity:.12,marginBottom:20}}><KittyFace size={50}/></div>
+        </Fragment>)}
+      </div>
+
+      <div className="bottom-tabs">
+        {TABS.map(t=>(<button key={t.key} className={tab===t.key?"active":""} onClick={()=>setTab(t.key)}><span className="tab-icon">{t.icon}</span>{t.label}{t.key==="form"&&warnings.length>0&&<span className="badge">{warnings.length}</span>}</button>))}
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
