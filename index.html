@@ -242,8 +242,8 @@ function App() {
         {/* ═══ INPUT ═══ */}
         {tab==="input"&&(<Fragment>
           <div style={card}><div style={cardH}><span><Ico t={t} size={22}/> 기본정보</span></div><div style={cardB}>
-            <NumberInput t={t} label="법인명" value={companyName} onChange={v=>setCompanyName(v)} placeholder="" />
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><NumberInput t={t} label="사업연도" value={bizYear} onChange={v=>setBizYear(v)} /><NumberInput t={t} label="사업자등록번호" value={bizNo} onChange={v=>setBizNo(v)} placeholder="000-00-00000" /></div>
+            <div className="field"><label style={{fontSize:13,color:t.textLight,marginBottom:5,display:"block"}}>법인명</label><input type="text" value={companyName} onChange={e=>setCompanyName(e.target.value)} placeholder="(주)예시법인" style={{width:"100%",padding:"10px 12px",border:"1px solid "+t.inputBdr,borderRadius:10,fontSize:16,background:"#fff",outline:"none",boxSizing:"border-box",textAlign:"left"}} /></div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}><div className="field"><label style={{fontSize:13,color:t.textLight,marginBottom:5,display:"block"}}>사업연도</label><input type="text" value={bizYear} onChange={e=>setBizYear(e.target.value)} style={{width:"100%",padding:"10px 12px",border:"1px solid "+t.inputBdr,borderRadius:10,fontSize:16,background:"#fff",outline:"none",boxSizing:"border-box",textAlign:"center"}} /></div><div className="field"><label style={{fontSize:13,color:t.textLight,marginBottom:5,display:"block"}}>사업자등록번호</label><input type="text" value={bizNo} onChange={e=>setBizNo(e.target.value)} placeholder="000-00-00000" style={{width:"100%",padding:"10px 12px",border:"1px solid "+t.inputBdr,borderRadius:10,fontSize:16,background:"#fff",outline:"none",boxSizing:"border-box",textAlign:"center"}} /></div></div>
           </div></div>
 
           <div style={card}><div style={cardH}><span><Paw t={t}/> ① 채권 기말잔액</span><button onClick={addRec} style={{padding:"6px 12px",fontSize:13,background:t.primaryGrad,color:"#fff",border:"none",borderRadius:8,cursor:"pointer"}}>+ 추가</button></div><div style={cardB}>
